@@ -15,6 +15,7 @@ bind_master_to_slave() {
     local _allow_update
     _allow_update="allow-update { key $NSUPDATE_KEY_NAME; }"
 
+    echo "[maintenance-mode] Reconfiguring BIND as slave..."
     perl -0pi -e "s/$RE_TYPE_MASTER/type slave/g" /etc/bind/named.conf.local
     perl -0pi -e "s/$RE_MASTERS/$_allow_update/g" /etc/bind/named.conf.local
 
@@ -26,6 +27,7 @@ bind_slave_to_master() {
     local _masters
     _masters="masters { ${PUBLIC_IPS[*]/%/;} }"
 
+    echo "[maintenance-mode] Reconfiguring BIND as master..."
     perl -0pi -e "s/$RE_TYPE_SLAVE/type master/g" /etc/bind/named.conf.local
     perl -0pi -e "s/$RE_ALLOW_UPDATE/$_masters/g" /etc/bind/named.conf.local
 
@@ -61,6 +63,7 @@ set_public_ip() {
     done
     echo "send" >>"$_nsupdate_input"
 
+    echo "[maintenance-mode] Updating public IP to $_ip..."
     nsupdate -k $NSUPDATE_KEY_PATH "$_nsupdate_input";
 }
 
@@ -73,6 +76,8 @@ notify() {
 
     _subj=$1
     _msg=$2
+
+    echo "($_subj) $_msg"
 
     for _email in "${NOTIFY_EMAILS[@]}"; do
         mail -s "$_subj" -a "From:$NOTIFY_FROM" "$_email" <<<"$_msg"
