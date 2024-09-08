@@ -11,19 +11,19 @@ while true; do
 
     if [ -z "$next_ip" ] && [ "$current_ip" != "$MAINTENANCE_IP" ]; then
         # No good public IPs were found, and not in maintenance mode
-        notify "maintenance-mode: ENABLED" "No healthy public IPs were found."
         bind_slave_to_master
+        notify "maintenance-mode: ENABLED" "No healthy public IPs were found."
         next_ip=$MAINTENANCE_IP
     elif [ -n "$next_ip" ] && [ "$current_ip" == "$MAINTENANCE_IP" ]; then
         # In maintenance mode, but a good public IP was found
-        notify "maintenance-mode: DISABLED" "A healthy public IP was found."
         bind_master_to_slave
+        notify "maintenance-mode: DISABLED" "A healthy public IP was found."
     fi
 
     if [ "$next_ip" != "$current_ip" ]; then
         # The current public IP is not the best
-        notify "maintenance-mode: UPDATED" "Updated from $current_ip to $next_ip."
-        select_public_ip "$next_ip"
+        set_public_ip "$next_ip"
+        notify "maintenance-mode: CHANGED" "Updated from $current_ip to $next_ip."
         current_ip=$next_ip
     fi
 
