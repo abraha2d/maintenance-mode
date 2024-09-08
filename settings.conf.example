@@ -1,0 +1,35 @@
+# Rename to settings.conf, and customize to fit your environment
+
+# A prioritized list of your homelab's public IPs
+# The following should be accessible via these IPs:
+# - Something that will respond to ICMP echoes
+# - An instance of BIND hosting master zones for $DOMAINS
+PUBLIC_IPS=(
+    1.2.3.4
+    5.6.7.8
+)
+
+# The public IP address of this machine
+# The following should be accessible via this IP:
+# - An instance of BIND hosting slave zones for $DOMAINS
+MAINTENANCE_IP=9.0.1.2
+
+# A list of A records to keep updated as IPs go up and down
+# For performance, keep this list as short as possible
+DOMAINS=(
+    example.com
+    example.org
+)
+
+# A list of email addresses to notify when actions are taken
+NOTIFY_EMAILS=(
+    notify@example.net
+    5555551234@vtext.com
+)
+
+# The email address from which to send notifications from
+NOTIFY_FROM="maintenance-mode <noreply@example.com>"
+
+# The key to use when keeping all $DOMAINS updated
+NSUPDATE_KEY_NAME=nsupdate.
+NSUPDATE_KEY_PATH=/path/to/Knsupdate.+123+45678.key
