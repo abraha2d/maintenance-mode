@@ -59,15 +59,18 @@ set_public_ip() {
 
     echo "server $_ip" >>"$_nsupdate_input"
     for _domain in "${DOMAINS[@]}"; do
-        echo "update delete $_domain. A" >>"$_nsupdate_input"
-        echo "update add $_domain. 1 A $_ip" >>"$_nsupdate_input"
+        {
+            echo "update delete $_domain. A"
+            echo "update add $_domain. 1 A $_ip"
+            echo
+         } >>"$_nsupdate_input"
     done
     echo "send" >>"$_nsupdate_input"
 
     echo "[maintenance-mode] Updating public IP to $_ip..."
     for _sleep in 1 2 4 8 16; do
-        sleep $_sleep
         nsupdate -k $NSUPDATE_KEY_PATH "$_nsupdate_input" && return;
+        sleep $_sleep
     done
 }
 
