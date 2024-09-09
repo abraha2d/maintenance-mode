@@ -22,7 +22,7 @@ bind_master_to_slave() {
     systemctl restart bind9.service
 
     for _domain in "${DOMAINS[@]}"; do
-        rndc retransfer "$_domain"
+        rndc retransfer "$_domain" 2>/dev/null || echo "[maintenance-mode] Sync failed for $_domain... not a zone?"
     done
 }
 
