@@ -20,6 +20,10 @@ bind_master_to_slave() {
     perl -0pi -e "s/$RE_ALLOW_UPDATE/$_masters/g" /etc/bind/named.conf.local
 
     systemctl restart bind9.service
+
+    for _domain in "${DOMAINS[@]}"; do
+        rndc retransfer "$_domain"
+    done
 }
 
 # re-configure bind as master
