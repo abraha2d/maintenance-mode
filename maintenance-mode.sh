@@ -6,22 +6,30 @@ set -eu
 
 current_ip=$(dig @127.0.0.1 "${DOMAINS[0]}" +short)
 
-if [ "$1" == "on" ] && [ "$current_ip" != "$MAINTENANCE_IP" ]; then
-    bind_slave_to_master
-    set_public_ip "$MAINTENANCE_IP"
-    echo "[maintenance-mode] All done."
-    exit
-elif [ "$1" == "off" ] && [ "$current_ip" == "$MAINTENANCE_IP" ]; then
-    next_ip=$(select_public_ip)
-
-    if [ -z "$next_ip" ]; then
-        echo "[maintenance-mode] No healthy public IPs were found."
-        exit 1
+if [ "$1" == "on" ]; then
+    if [ "$current_ip" != "$MAINTENANCE_IP" ]; then
+        bind_slave_to_master
+        set_public_ip "$MAINTENANCE_IP"
+        echo "[maintenance-mode] All done."
+    else
+        echo "[maintenance-mode] Nothing to do."
     fi
+    exit
+elif [ "$1" == "off" ]; then
+    if [ "$current_ip" == "$MAINTENANCE_IP" ]; then
+        next_ip=$(select_public_ip)
 
-    bind_master_to_slave
-    set_public_ip "$next_ip"
-    echo "[maintenance-mode] All done."
+        if [ -z "$next_ip" ]; then
+            echo "[maintenance-mode] No healthy public IPs were found."
+            exit 1
+        fi
+
+        bind_master_to_slave
+        set_public_ip "$next_ip"
+        echo "[maintenance-mode] All done."
+    else
+        echo "[maintenance-mode] Nothing to do."
+    fi
     exit
 elif [ -z "$1" ]; then
     echo "[maintenance-mode] Please confirm public IP choice: $1"
