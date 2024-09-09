@@ -52,6 +52,7 @@ set_public_ip() {
     local _domain
     local _ip
     local _nsupdate_input
+    local _sleep
 
     _ip=$1
     _nsupdate_input=$(mktemp)
@@ -64,7 +65,10 @@ set_public_ip() {
     echo "send" >>"$_nsupdate_input"
 
     echo "[maintenance-mode] Updating public IP to $_ip..."
-    nsupdate -k $NSUPDATE_KEY_PATH "$_nsupdate_input";
+    for _sleep in 1 2 4 8 16; do
+        sleep $_sleep
+        nsupdate -k $NSUPDATE_KEY_PATH "$_nsupdate_input" && return;
+    done
 }
 
 # notify <subj> <msg>
