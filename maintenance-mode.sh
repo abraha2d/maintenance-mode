@@ -4,7 +4,9 @@ set -eu
 
 . "$(dirname "$(readlink -e "$0")")"/utils.sh
 
+echo "[maintenance-mode] Getting current public IP..."
 current_ip=$(dig @127.0.0.1 "${DOMAINS[0]}" +short)
+echo "[maintenance-mode] Current public IP: $current_ip"
 
 if [ "$1" == "on" ]; then
     if [ "$current_ip" != "$MAINTENANCE_IP" ]; then
@@ -41,6 +43,7 @@ elif [ -z "$1" ]; then
     exit
 fi
 
+echo "[maintenance-mode] Entering main loop..."
 while true; do
     next_ip=$(select_public_ip)
 
