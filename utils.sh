@@ -12,24 +12,24 @@ RE_MASTERS='(?<!\w)masters\s*{[^}]*}\s*(?=;)'
 
 # re-configure bind as slave
 bind_master_to_slave() {
-    local _allow_update
-    _allow_update="allow-update { key $NSUPDATE_KEY_NAME; }"
+    local _masters
+    _masters="masters { ${PUBLIC_IPS[*]/%/;} }"
 
     echo "[maintenance-mode] Reconfiguring BIND as slave..."
     perl -0pi -e "s/$RE_TYPE_MASTER/type slave/g" /etc/bind/named.conf.local
-    perl -0pi -e "s/$RE_MASTERS/$_allow_update/g" /etc/bind/named.conf.local
+    perl -0pi -e "s/$RE_ALLOW_UPDATE/$_masters/g" /etc/bind/named.conf.local
 
     systemctl restart bind9.service
 }
 
 # re-configure bind as master
 bind_slave_to_master() {
-    local _masters
-    _masters="masters { ${PUBLIC_IPS[*]/%/;} }"
+    local _allow_update
+    _allow_update="allow-update { key $NSUPDATE_KEY_NAME; }"
 
     echo "[maintenance-mode] Reconfiguring BIND as master..."
     perl -0pi -e "s/$RE_TYPE_SLAVE/type master/g" /etc/bind/named.conf.local
-    perl -0pi -e "s/$RE_ALLOW_UPDATE/$_masters/g" /etc/bind/named.conf.local
+    perl -0pi -e "s/$RE_MASTERS/$_allow_update/g" /etc/bind/named.conf.local
 
     systemctl restart bind9.service
 }
