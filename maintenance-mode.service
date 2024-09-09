@@ -1,0 +1,6 @@
+[Service]
+ExecStart=/opt/maintenance-mode/maintenance-mode.sh
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
