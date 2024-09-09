@@ -22,7 +22,7 @@ elif [ "${1-}" == "off" ]; then
         next_ip=$(select_public_ip)
 
         if [ -z "$next_ip" ]; then
-            echo "[maintenance-mode] No healthy public IPs were found."
+            echo "[maintenance-mode] No healthy public IP addresses were found."
             exit 1
         fi
 
@@ -50,12 +50,12 @@ while true; do
     if [ -z "$next_ip" ] && [ "$current_ip" != "$MAINTENANCE_IP" ]; then
         # No good public IPs were found, and not in maintenance mode
         bind_slave_to_master
-        notify "maintenance-mode: ENABLED" "No healthy public IPs were found."
+        notify "maintenance-mode: ENABLED" "No healthy public IP addresses were found."
         next_ip=$MAINTENANCE_IP
     elif [ -n "$next_ip" ] && [ "$current_ip" == "$MAINTENANCE_IP" ]; then
         # In maintenance mode, but a good public IP was found
         bind_master_to_slave
-        notify "maintenance-mode: DISABLED" "A healthy public IP was found."
+        notify "maintenance-mode: DISABLED" "A healthy public IP address was found."
     fi
 
     if [ -n "$next_ip" ] && [ "$next_ip" != "$current_ip" ]; then
