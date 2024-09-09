@@ -58,7 +58,7 @@ while true; do
         notify "maintenance-mode: DISABLED" "A healthy public IP was found."
     fi
 
-    if [ "$next_ip" != "$current_ip" ]; then
+    if [ -n "$next_ip" ] && [ "$next_ip" != "$current_ip" ]; then
         # The current public IP is not the best
         set_public_ip "$next_ip"
         notify "maintenance-mode: CHANGED" "Updated from $current_ip to $next_ip."
