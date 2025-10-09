@@ -19,7 +19,7 @@ bind_master_to_slave() {
     perl -0pi -e "s/$RE_TYPE_MASTER/type slave/g" /etc/bind/named.conf.local
     perl -0pi -e "s/$RE_ALLOW_UPDATE/$_masters/g" /etc/bind/named.conf.local
 
-    systemctl restart bind9.service
+    systemctl restart bind9.service; sleep 1
 
     for _domain in "${DOMAINS[@]}"; do
         rndc retransfer "$_domain" 2>/dev/null || echo "[maintenance-mode] Sync failed for $_domain... not a zone?"
