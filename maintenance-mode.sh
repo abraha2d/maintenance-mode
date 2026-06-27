@@ -46,25 +46,26 @@ fi
 echo "[maintenance-mode] Entering main loop..."
 while true; do
     next_ip=$(select_public_ip)
+    state=CHANGED
 
     if [ -z "$next_ip" ] && [ "$current_ip" != "$MAINTENANCE_IP" ]; then
         # No good public IPs were found, and not in maintenance mode
         echo "maintenance-mode: ENABLING..."
         bind_slave_to_master
-        notify "maintenance-mode: ENABLED" "No healthy public IP addresses were found."
         next_ip=$MAINTENANCE_IP
+        state=ENABLED
     elif [ -n "$next_ip" ] && [ "$current_ip" == "$MAINTENANCE_IP" ]; then
         # In maintenance mode, but a good public IP was found
         echo "maintenance-mode: DISABLING..."
         bind_master_to_slave
-        notify "maintenance-mode: DISABLED" "A healthy public IP address was found."
+        state=DISABLED
     fi
 
     if [ -n "$next_ip" ] && [ "$next_ip" != "$current_ip" ]; then
         # The current public IP is not the best
         echo "maintenance-mode: CHANGED..."
         set_public_ip "$next_ip"
-        notify "maintenance-mode: CHANGED" "Updated from $current_ip to $next_ip."
+        notify "maintenance-mode: $state" "Updated from $current_ip to $next_ip at $(date --rfc-3339=seconds)."
         current_ip=$next_ip
     fi
 
