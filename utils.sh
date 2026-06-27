@@ -13,7 +13,7 @@ RE_MASTERS='(?<!\w)masters\s*{[^}]*}\s*(?=;)'
 # re-configure bind as slave
 bind_master_to_slave() {
     local _masters
-    _masters="masters { ${PUBLIC_IPS[*]/%/;} }"
+    _masters="masters { ${PUBLIC_IPS[*]/%/ port 8053;} }"
 
     echo "[maintenance-mode] Reconfiguring BIND as slave..."
     perl -0pi -e "s/$RE_TYPE_MASTER/type slave/g" /etc/bind/named.conf.local
