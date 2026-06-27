@@ -43,7 +43,7 @@ select_public_ip() {
     local _ip
 
     for _ip in "${PUBLIC_IPS[@]}"; do
-        if ping -A -c5 -n -W1 "$_ip" >/dev/null; then
+        if ping -A -c10 -n -w30 "$_ip" >/dev/null; then
             echo "$_ip"
             return
         fi

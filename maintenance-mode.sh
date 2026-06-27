@@ -69,5 +69,5 @@ while true; do
         current_ip=$next_ip
     fi
 
-    sleep 1;
+    sleep 60;
 done
